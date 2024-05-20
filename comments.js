@@ -3,7 +3,6 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
-const comments = require('./comments');
 
 const server = http.createServer((req, res) => {
   const parsedUrl = url.parse(req.url, true);
@@ -12,7 +11,7 @@ const server = http.createServer((req, res) => {
 
   if (pathname === '/comments' && method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(comments));
+    res.end(JSON.stringify("This is a comment"));
   } else if (pathname === '/comments' && method === 'POST') {
     let body = '';
     req.on('data', (chunk) => {
