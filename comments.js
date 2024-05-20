@@ -7,9 +7,9 @@
 // Create a route /comments/like that allows the user to like a comment
 // Create a route /comments/dislike that allows the user to dislike a comment
 
-const express = require('express');
+import express, { json } from 'express';
 const app = express();
-app.use(express.json());
+app.use(json());
 
 const comments = [
   { id: 1, author: 'John Doe', comment: 'Hello, world!', likes: 0, dislikes: 0 },
