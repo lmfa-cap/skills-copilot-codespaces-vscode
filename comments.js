@@ -25,7 +25,3 @@ app.get('/comments/:id', (req, res) => {
   if (!comment) return res.status(404).send('The comment with the given ID was not found');
   res.json(comment);
 });
-
-app.post('/comments/new', (req, res) => {
-  const comment = {
-    id: comments.length + 1 }});
