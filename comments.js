@@ -1,27 +1,41 @@
 // Create a web server
-// Create a route /comments that returns a list of comments
-// Create a route /comments/:id that returns a single comment
-// Create a route /comments/new that allows the user to add a new comment
-// Create a route /comments/delete that allows the user to delete a comment
-// Create a route /comments/edit that allows the user to edit a comment
-// Create a route /comments/like that allows the user to like a comment
-// Create a route /comments/dislike that allows the user to dislike a comment
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const url = require('url');
+const comments = require('./comments');
 
-import express, { json } from 'express';
-const app = express();
-app.use(json());
+const server = http.createServer((req, res) => {
+  const parsedUrl = url.parse(req.url, true);
+  const pathname = parsedUrl.pathname;
+  const method = req.method;
 
-const comments = [
-  { id: 1, author: 'John Doe', comment: 'Hello, world!', likes: 0, dislikes: 0 },
-  { id: 2, author: 'Jane Doe', comment: 'Goodbye, world!', likes: 0, dislikes: 0 }
-];
-
-app.get('/comments', (req, res) => {
-  res.json(comments);
+  if (pathname === '/comments' && method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(comments));
+  } else if (pathname === '/comments' && method === 'POST') {
+    let body = '';
+    req.on('data', (chunk) => {
+      body += chunk.toString();
+    });
+    req.on('end', () => {
+      const comment = JSON.parse(body);
+      comments.push(comment);
+      res.writeHead(201, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(comment));
+    });
+  } else {
+    res.writeHead(404, { 'Content-Type': 'text/html' });
+    res.end('<h1>Not Found</h1>');
+  }
 });
 
-app.get('/comments/:id', (req, res) => {
-  const comment = comments.find(comment => comment.id === parseInt(req.params.id));
-  if (!comment) return res.status(404).send('The comment with the given ID was not found');
-  res.json(comment);
+server.listen(3000, () => {
+  console.log('Server is running on http://localhost:3000/');
 });
+// The comments.js file exports an array of comments. The server reads comments from the file and sends them back to the client when the client makes a GET request to /comments. When the client sends a POST request to /comments, the server reads the request body, parses it, and adds the new comment to the comments array. Finally, the server sends the new comment back to the client.
+
+// Run the server using node comments.js and test it using a tool like Postman. You can make GET requests to /comments to read comments and POST requests to /comments to add new comments.
+
+// Conclusion
+// In this article, you learned how to create a simple web server using Node.js. You also learned how to handle different types of HTTP requests (GET, POST, etc.) and send responses to clients. You can use this knowledge to build more complex web servers that serve static files, handle form submissions, authenticate users, and more. I hope this article helps you get started with Node.js web development!
